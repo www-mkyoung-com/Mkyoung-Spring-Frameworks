@@ -1,0 +1,8 @@
+welcome.message: Hello Mkyong
+
+#logging.level.org.springframework.web=ERROR
+#logging.level.com.mkyong=DEBUG
+#logging.level.=DEBUG
+#logging.file=${java.io.tmpdir}/application.log
+
+#logging.file=/Users/mkyong/debug2.log
