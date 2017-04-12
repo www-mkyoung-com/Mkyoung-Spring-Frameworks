@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="dateEditor"
+		class="org.springframework.beans.propertyeditors.CustomDateEditor">
+
+		<constructor-arg>
+			<bean class="java.text.SimpleDateFormat">
+				<constructor-arg value="yyyy-MM-dd" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg value="true" />
+
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.util.Date">
+					<ref local="dateEditor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="customer" class="com.mkyong.common.Customer">
+		<property name="date" value="2010-02-31" />
+	</bean>
+
+</beans>
