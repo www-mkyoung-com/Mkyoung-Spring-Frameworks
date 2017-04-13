@@ -1,257 +1,273 @@
 The Spring’s Object/XML Mapping, is converting Object to XML or vice verse. This process is also known as
 
-XML Marshalling – Convert Object to XML.
-XML UnMarshalling – Convert XML to Object.
-In this tutorial, we show you how to use Spring’s oxm to do the conversion, Object <--- Spring oxm ---> XML.
+1.  **XML Marshalling** – Convert Object to XML.
+2.  **XML UnMarshalling** – Convert XML to Object.
 
-Note
-No nonsense, for why and what benefits of using Spring’s oxm, read this official Spring Object/XML mapping article.
-1. Project Dependency
+In this tutorial, we show you how to use Spring’s oxm to do the conversion, **Object <--- Spring oxm ---> XML**.
+
+**Note**  
+No nonsense, for why and what benefits of using Spring’s oxm, read this [official Spring Object/XML mapping](http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/oxm.html) article.
+
+## 1\. Project Dependency
+
 Dependencies in this example.
 
-Note
+**Note**  
 Spring’s oxm itself doesn’t handle the XML marshalling or UnMarshalling, it depends developer to inject their prefer XML binding framework. In this case, you will use Castor binding framework.
-<properties>
-	<spring.version>3.0.5.RELEASE</spring.version>
-</properties>
 
-<dependencies>
+    <properties>
+    	<spring.version>3.0.5.RELEASE</spring.version>
+    </properties>
 
-	<!-- Spring 3 dependencies -->
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-core</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
+    <dependencies>
 
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-context</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
+    	<!-- Spring 3 dependencies -->
+    	<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-core</artifactId>
+    		<version>${spring.version}</version>
+    	</dependency>
 
-	<!-- spring oxm -->
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-oxm</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
+    	<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-context</artifactId>
+    		<version>${spring.version}</version>
+    	</dependency>
 
-	<!-- Uses Castor for XML -->
-	<dependency>
-		<groupId>org.codehaus.castor</groupId>
-		<artifactId>castor</artifactId>
-		<version>1.2</version>
-	</dependency>
+    	<!-- spring oxm -->
+    	<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-oxm</artifactId>
+    		<version>${spring.version}</version>
+    	</dependency>
 
-	<!-- Castor need this -->
-	<dependency>
-		<groupId>xerces</groupId>
-		<artifactId>xercesImpl</artifactId>
-		<version>2.8.1</version>
-	</dependency>
+    	<!-- Uses Castor for XML -->
+    	<dependency>
+    		<groupId>org.codehaus.castor</groupId>
+    		<artifactId>castor</artifactId>
+    		<version>1.2</version>
+    	</dependency>
 
-</dependencies>
+    	<!-- Castor need this -->
+    	<dependency>
+    		<groupId>xerces</groupId>
+    		<artifactId>xercesImpl</artifactId>
+    		<version>2.8.1</version>
+    	</dependency>
 
- 
-2. Simple Object
+    </dependencies>
+
+## 2\. Simple Object
+
 A simple object, later convert it into XML file.
 
-package com.mkyong.core.model;
+    package com.mkyong.core.model;
 
-public class Customer {
+    public class Customer {
 
-	String name;
-	int age;
-	boolean flag;
-	String address;
+    	String name;
+    	int age;
+    	boolean flag;
+    	String address;
 
-	//standard getter, setter and toString() methods.
-}
+    	//standard getter, setter and toString() methods.
+    }
 
- 
-3. Marshaller and Unmarshaller
-This class will handle the conversion via Spring’s oxm interfaces : Marshaller and Unmarshaller.
+## 3\. Marshaller and Unmarshaller
 
-package com.mkyong.core;
+This class will handle the conversion via Spring’s oxm interfaces : `Marshaller` and `Unmarshaller`.
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
+    package com.mkyong.core;
 
-public class XMLConverter {
+    import java.io.FileInputStream;
+    import java.io.FileOutputStream;
+    import java.io.IOException;
+    import javax.xml.transform.stream.StreamResult;
+    import javax.xml.transform.stream.StreamSource;
+    import org.springframework.oxm.Marshaller;
+    import org.springframework.oxm.Unmarshaller;
 
-	private Marshaller marshaller;
-	private Unmarshaller unmarshaller;
+    public class XMLConverter {
 
-	public Marshaller getMarshaller() {
-		return marshaller;
-	}
+    	private Marshaller marshaller;
+    	private Unmarshaller unmarshaller;
 
-	public void setMarshaller(Marshaller marshaller) {
-		this.marshaller = marshaller;
-	}
+    	public Marshaller getMarshaller() {
+    		return marshaller;
+    	}
 
-	public Unmarshaller getUnmarshaller() {
-		return unmarshaller;
-	}
+    	public void setMarshaller(Marshaller marshaller) {
+    		this.marshaller = marshaller;
+    	}
 
-	public void setUnmarshaller(Unmarshaller unmarshaller) {
-		this.unmarshaller = unmarshaller;
-	}
+    	public Unmarshaller getUnmarshaller() {
+    		return unmarshaller;
+    	}
 
-	public void convertFromObjectToXML(Object object, String filepath)
-		throws IOException {
+    	public void setUnmarshaller(Unmarshaller unmarshaller) {
+    		this.unmarshaller = unmarshaller;
+    	}
 
-		FileOutputStream os = null;
-		try {
-			os = new FileOutputStream(filepath);
-			getMarshaller().marshal(object, new StreamResult(os));
-		} finally {
-			if (os != null) {
-				os.close();
-			}
-		}
-	}
+    	public void convertFromObjectToXML(Object object, String filepath)
+    		throws IOException {
 
-	public Object convertFromXMLToObject(String xmlfile) throws IOException {
+    		FileOutputStream os = null;
+    		try {
+    			os = new FileOutputStream(filepath);
+    			getMarshaller().marshal(object, new StreamResult(os));
+    		} finally {
+    			if (os != null) {
+    				os.close();
+    			}
+    		}
+    	}
 
-		FileInputStream is = null;
-		try {
-			is = new FileInputStream(xmlfile);
-			return getUnmarshaller().unmarshal(new StreamSource(is));
-		} finally {
-			if (is != null) {
-				is.close();
-			}
-		}
-	}
+    	public Object convertFromXMLToObject(String xmlfile) throws IOException {
 
-}
-4. Spring Configuration
-In Spring’s bean configuration file, inject CastorMarshaller as the XML binding framework.
+    		FileInputStream is = null;
+    		try {
+    			is = new FileInputStream(xmlfile);
+    			return getUnmarshaller().unmarshal(new StreamSource(is));
+    		} finally {
+    			if (is != null) {
+    				is.close();
+    			}
+    		}
+    	}
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    }
 
-	<bean id="XMLConverter" class="com.mkyong.core.XMLConverter">
-		<property name="marshaller" ref="castorMarshaller" />
-		<property name="unmarshaller" ref="castorMarshaller" />
-	</bean>
-	<bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller" />
+## 4\. Spring Configuration
 
-</beans>
-5. Test
+In Spring’s bean configuration file, inject `CastorMarshaller` as the XML binding framework.
+
+    <beans xmlns="http://www.springframework.org/schema/beans"
+    	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    	<bean id="XMLConverter" class="com.mkyong.core.XMLConverter">
+    		<property name="marshaller" ref="castorMarshaller" />
+    		<property name="unmarshaller" ref="castorMarshaller" />
+    	</bean>
+    	<bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller" />
+
+    </beans>
+
+## 5\. Test
+
 Run it.
 
-package com.mkyong.core;
+    package com.mkyong.core;
 
-import java.io.IOException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import com.mkyong.core.model.Customer;
+    import java.io.IOException;
+    import org.springframework.context.ApplicationContext;
+    import org.springframework.context.support.ClassPathXmlApplicationContext;
+    import com.mkyong.core.model.Customer;
 
-public class App {
-	private static final String XML_FILE_NAME = "customer.xml";
+    public class App {
+    	private static final String XML_FILE_NAME = "customer.xml";
 
-	public static void main(String[] args) throws IOException {
-		ApplicationContext appContext = new ClassPathXmlApplicationContext("App.xml");
-		XMLConverter converter = (XMLConverter) appContext.getBean("XMLConverter");
+    	public static void main(String[] args) throws IOException {
+    		ApplicationContext appContext = new ClassPathXmlApplicationContext("App.xml");
+    		XMLConverter converter = (XMLConverter) appContext.getBean("XMLConverter");
 
-		Customer customer = new Customer();
-		customer.setName("mkyong");
-		customer.setAge(30);
-		customer.setFlag(true);
-		customer.setAddress("This is address");
+    		Customer customer = new Customer();
+    		customer.setName("mkyong");
+    		customer.setAge(30);
+    		customer.setFlag(true);
+    		customer.setAddress("This is address");
 
-		System.out.println("Convert Object to XML!");
-		//from object to XML file
-		converter.convertFromObjectToXML(customer, XML_FILE_NAME);
-		System.out.println("Done \n");
+    		System.out.println("Convert Object to XML!");
+    		//from object to XML file
+    		converter.convertFromObjectToXML(customer, XML_FILE_NAME);
+    		System.out.println("Done \n");
 
-		System.out.println("Convert XML back to Object!");
-		//from XML to object
-		Customer customer2 = (Customer)converter.convertFromXMLToObject(XML_FILE_NAME);
-		System.out.println(customer2);
-		System.out.println("Done");
+    		System.out.println("Convert XML back to Object!");
+    		//from XML to object
+    		Customer customer2 = (Customer)converter.convertFromXMLToObject(XML_FILE_NAME);
+    		System.out.println(customer2);
+    		System.out.println("Done");
 
-	}
-}
+    	}
+    }
+
 Output
 
-Convert Object to XML!
-Done
+    Convert Object to XML!
+    Done
 
-Convert XML back to Object!
-Customer [name=mkyong, age=30, flag=true, address=This is address]
-Done
-The following XML file “customer.xml” is generated in your project root folder.
+    Convert XML back to Object!
+    Customer [name=mkyong, age=30, flag=true, address=This is address]
+    Done
 
-File : customer.xml
+The following XML file “**customer.xml**” is generated in your project root folder.
 
-<?xml version="1.0" encoding="UTF-8"?>
-<customer flag="true" age="30">
-	<address>This is address</address>
-	<name>mkyong</name>
-</customer>
-Castor XML Mapping
-Wait, why flag and age are converted as attribute? Is that a way to control which field should use as attribute or element? Of course, you can use Castor XML mapping to define the relationship between Object and XML.
+_File : customer.xml_
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <customer flag="true" age="30">
+    	<address>This is address</address>
+    	<name>mkyong</name>
+    </customer>
+
+## Castor XML Mapping
+
+Wait, why flag and age are converted as attribute? Is that a way to control which field should use as attribute or element? Of course, you can use [Castor XML mapping](http://www.castor.org/xml-mapping.html%20target=) to define the relationship between Object and XML.
 
 Create following mapping file, and put it into your project classpath.
 
-File : mapping.xml
+_File : mapping.xml_
 
-<mapping>
-	<class name="com.mkyong.core.model.Customer">
+    <mapping>
+    	<class name="com.mkyong.core.model.Customer">
 
-		<map-to xml="customer" />
+    		<map-to xml="customer" />
 
-		<field name="age" type="integer">
-			<bind-xml name="age" node="attribute" />
-		</field>
+    		<field name="age" type="integer">
+    			<bind-xml name="age" node="attribute" />
+    		</field>
 
-		<field name="flag" type="boolean">
-			<bind-xml name="flag" node="element" />
-		</field>
+    		<field name="flag" type="boolean">
+    			<bind-xml name="flag" node="element" />
+    		</field>
 
-		<field name="name" type="string">
-			<bind-xml name="name" node="element" />
-		</field>
+    		<field name="name" type="string">
+    			<bind-xml name="name" node="element" />
+    		</field>
 
-		<field name="address" type="string">
-			<bind-xml name="address" node="element" />
-		</field>
-	</class>
-</mapping>
-In Spring bean configuration file, inject above mapping.xml into CastorMarshaller via “mappingLocation“.
+    		<field name="address" type="string">
+    			<bind-xml name="address" node="element" />
+    		</field>
+    	</class>
+    </mapping>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+In Spring bean configuration file, inject above **mapping.xml** into CastorMarshaller via “**mappingLocation**“.
 
-	<bean id="XMLConverter" class="com.mkyong.core.XMLConverter">
-		<property name="marshaller" ref="castorMarshaller" />
-		<property name="unmarshaller" ref="castorMarshaller" />
-	</bean>
-	<bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller" >
-		<property name="mappingLocation" value="classpath:mapping.xml" />
-	</bean>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+    	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-</beans>
-Test it again, the XML file “customer.xml” will be updated.
+    	<bean id="XMLConverter" class="com.mkyong.core.XMLConverter">
+    		<property name="marshaller" ref="castorMarshaller" />
+    		<property name="unmarshaller" ref="castorMarshaller" />
+    	</bean>
+    	<bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller" >
+    		<property name="mappingLocation" value="classpath:mapping.xml" />
+    	</bean>
 
-File : customer.xml
+    </beans>
 
-<?xml version="1.0" encoding="UTF-8"?>
-<customer age="30">
-	<flag>true</flag>
-	<name>mkyong</name>
-	<address>This is address</address>
-</customer>
+Test it again, the XML file “**customer.xml**” will be updated.
+
+_File : customer.xml_
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <customer age="30">
+    	<flag>true</flag>
+    	<name>mkyong</name>
+    	<address>This is address</address>
+    </customer>
+
+[http://www.mkyong.com/spring3/spring-objectxml-mapping-example/](http://www.mkyong.com/spring3/spring-objectxml-mapping-example/)
