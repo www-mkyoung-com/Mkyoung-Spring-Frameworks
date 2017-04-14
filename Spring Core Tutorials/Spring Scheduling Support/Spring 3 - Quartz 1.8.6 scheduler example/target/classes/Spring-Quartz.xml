@@ -1,0 +1,57 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<bean id="runMeTask" class="com.mkyong.common.RunMeTask" />
+
+	<!-- Spring Quartz -->
+	<bean name="runMeJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+
+		<property name="jobClass" value="com.mkyong.common.RunMeJob" />
+
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="runMeTask" value-ref="runMeTask" />
+			</map>
+		</property>
+
+	</bean>
+
+	<!-- <bean id="runMeJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
+		<property name="targetObject" ref="runMeTask" /> <property name="targetMethod" 
+		value="printMe" /> </bean> -->
+
+	<!-- Simple Trigger, run every 5 seconds -->
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+
+		<property name="jobDetail" ref="runMeJob" />
+		<property name="repeatInterval" value="5000" />
+		<property name="startDelay" value="1000" />
+
+	</bean>
+
+	<!-- Cron Trigger, run every 5 seconds -->
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+
+		<property name="jobDetail" ref="runMeJob" />
+		<property name="cronExpression" value="0/5 * * * * ?" />
+
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="runMeJob" />
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+				<ref bean="simpleTrigger" />
+			</list>
+		</property>
+	</bean>
+
+</beans>
