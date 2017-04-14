@@ -1,0 +1,48 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+    <!-- Scheduler task -->
+ 	<bean name="schedulerTask" class="com.mkyong.common.quartz.SchedulerTask" />
+ 	
+ 	<!-- Scheduler job -->
+	<bean name="schedulerJob"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+ 
+		<property name="jobClass" value="com.mkyong.common.quartz.SchedulerJob" />
+	 
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="schedulerTask" value-ref="schedulerTask" />
+			</map>
+		</property>
+ 
+	</bean>
+
+	<!-- Cron Trigger -->
+	<bean id="cronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+ 
+		<property name="jobDetail" ref="schedulerJob" />
+		<property name="cronExpression" value="0/5 * * * * ?" />
+ 
+	</bean>
+	
+	<!-- Scheduler -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+		   <list>
+		      <ref bean="schedulerJob" />
+		   </list>
+		</property>
+	 
+		<property name="triggers">
+		    <list>
+				<ref bean="cronTrigger" />
+		    </list>
+		</property>
+   </bean>
+   
+ 
+</beans>
