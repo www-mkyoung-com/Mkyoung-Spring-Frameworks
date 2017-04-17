@@ -1,0 +1,28 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" />
+    
+    <bean class="com.mkyong.common.controller.RevenueReportController" />
+    
+    <bean class="org.springframework.web.servlet.view.XmlViewResolver">
+	   <property name="location">
+	       <value>/WEB-INF/spring-excel-views.xml</value>
+	   </property>
+	   <property name="order" value="0" />
+	</bean>
+    
+	<bean id="viewResolver"
+      	class="org.springframework.web.servlet.view.InternalResourceViewResolver" >
+        <property name="prefix">
+           <value>/WEB-INF/pages/</value>
+         </property>
+        <property name="suffix">
+           <value>.jsp</value>
+        </property>
+        <property name="order" value="1" />
+    </bean>
+	
+</beans>
