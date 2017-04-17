@@ -1,0 +1,60 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" />
+	 
+	<bean class="com.mkyong.customer.controller.CustomerController">
+		<property name="formView" value="CustomerForm" />
+		<property name="successView" value="customerSuccessRedirect" />
+		
+		<!-- 
+		<property name="successView" value="customerSuccessRedirect" />
+		-->
+		
+		<!-- Map a validator -->
+		<property name="validator">
+			<bean class="com.mkyong.customer.validator.CustomerValidator" />
+		</property>
+	</bean>
+    
+    <!-- Redirect Controller -->
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/CustomerSuccess.htm">customerSuccessController</prop>
+            </props>
+        </property>
+    </bean>
+	
+	<bean id="customerSuccessController" 
+        class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+	    <property name="viewName" value="CustomerSuccess" />
+    </bean>
+	 
+ 	<!-- Register the Customer.properties -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="com/mkyong/customer/properties/Customer" />
+	</bean>
+ 	
+	<bean id="viewResolver"
+	      class="org.springframework.web.servlet.view.InternalResourceViewResolver" >
+          <property name="prefix">
+              <value>/WEB-INF/pages/</value>
+           </property>
+          <property name="suffix">
+             <value>.jsp</value>
+          </property>
+          <property name="order" value="1" />
+    </bean>
+
+	<bean class="org.springframework.web.servlet.view.XmlViewResolver">
+	   <property name="location">
+	       <value>/WEB-INF/spring-views.xml</value>
+	   </property>
+	   <property name="order" value="0" />
+	</bean>
+	
+</beans>
