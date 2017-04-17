@@ -1,0 +1,51 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	   <property name="mappings">
+		<props>
+		   <prop key="/welcome.htm">welcomeController</prop>
+		 </props>
+	   </property>
+	   <property name="interceptors">
+			<list>
+				<ref bean="maintenanceInterceptor" />
+				<ref bean="executeTimeInterceptor" />
+			</list>
+	   </property>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" >
+		<property name="interceptors">
+			<list>
+				<ref bean="executeTimeInterceptor" />
+			</list>
+		</property>
+	</bean>	
+	
+	<bean id="welcomeController" class="com.mkyong.common.controller.WelcomeController" />
+	<bean class="com.mkyong.common.controller.MaintenanceController" />
+	
+	<bean id="executeTimeInterceptor" 
+		class="com.mkyong.common.interceptor.ExecuteTimeInterceptor" />
+	
+	<bean id="maintenanceInterceptor" 
+		class="com.mkyong.common.interceptor.MaintenanceInterceptor" >
+		<property name="maintenanceStartTime" value="10"/>
+		<property name="maintenanceEndTime" value="20"/>
+		<property name="maintenanceMapping" value="/SpringMVC/maintenance.htm"/>
+	</bean>
+
+	<bean id="viewResolver"
+    	class="org.springframework.web.servlet.view.InternalResourceViewResolver" >
+        <property name="prefix">
+            <value>/WEB-INF/pages/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+</beans>
