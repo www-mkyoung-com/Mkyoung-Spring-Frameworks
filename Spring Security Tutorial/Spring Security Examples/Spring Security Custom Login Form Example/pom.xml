@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.mkyong</groupId>
+	<artifactId>spring-security-loginform-xml</artifactId>
+	<packaging>war</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>SpringSecurity Custom Login Form XML</name>
+	<url>http://www.mkyong.com/tutorials/spring-security-tutorials/</url>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>mkyong</id>
+			<name>Yong Mook Kim</name>
+			<email>mkyong2002@gmail.com</email>
+		</developer>
+	</developers>
+	<properties>
+		<jdk.version>1.6</jdk.version>
+		<spring.version>3.2.8.RELEASE</spring.version>
+		<spring.security.version>3.2.3.RELEASE</spring.security.version>
+		<jstl.version>1.2</jstl.version>
+	</properties>
+
+	<dependencies>
+
+		<!-- Spring 3 dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		<!-- jstl for jsp page -->
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>SpringSecurityHelloWorld</finalName>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+					<wtpversion>2.0</wtpversion>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
