@@ -1,0 +1,47 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<!-- enable use-expressions -->
+	<http auto-config="true" use-expressions="true">
+
+		<headers>
+			<cache-control />
+		</headers>
+
+		<intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')" />
+		<!-- redirect to 403 access denied <intercept-url pattern="/update**" access="hasRole('ROLE_ADMIN') 
+			and isFullyAuthenticated()" /> -->
+
+		<form-login login-page="/login" 
+		    default-target-url="/welcome"
+			authentication-failure-url="/login?error" 
+			username-parameter="username"
+			password-parameter="password" 
+			login-processing-url="/auth/login_check"
+			authentication-success-handler-ref="savedRequestAwareAuthenticationSuccessHandler" />
+
+		<logout logout-success-url="/login?logout" delete-cookies="JSESSIONID" />
+		<!-- enable csrf protection -->
+		<csrf />
+
+		<remember-me 
+		    token-validity-seconds="1209600"
+			remember-me-parameter="remember-me" 
+			data-source-ref="dataSource" />
+
+	</http>
+
+	<!-- Select users and user_roles from database -->
+	<authentication-manager>
+		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select username,password, enabled from users where username=?"
+				authorities-by-username-query="select username, role from user_roles where username =?  " />
+		</authentication-provider>
+	</authentication-manager>
+
+</beans:beans>
