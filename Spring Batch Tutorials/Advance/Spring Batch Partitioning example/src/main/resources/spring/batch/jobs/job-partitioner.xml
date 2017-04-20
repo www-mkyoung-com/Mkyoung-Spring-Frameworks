@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch 
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		">
+
+    <!-- spring batch core settings -->
+	<import resource="../config/context.xml" />
+	
+	<!-- database settings -->
+	<import resource="../config/database.xml" />
+
+	<!-- partitioner job -->
+	<job id="partitionJob" xmlns="http://www.springframework.org/schema/batch">
+	    
+	    <!-- master step, 10 threads (grid-size)  -->
+		<step id="masterStep">
+			<partition step="slave" partitioner="rangePartitioner">
+				<handler grid-size="10" task-executor="taskExecutor" />
+			</partition>
+		</step>
+		
+	</job>
+
+	<!-- Jobs to run -->
+	<step id="slave" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet>
+			<chunk reader="pagingItemReader" writer="flatFileItemWriter"
+				processor="itemProcessor" commit-interval="1" />
+		</tasklet>
+	</step>
+
+	<bean id="rangePartitioner" class="com.mkyong.partition.RangePartitioner" />
+
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+
+	<bean id="itemProcessor" class="com.mkyong.processor.UserProcessor"
+		scope="step">
+		<property name="threadName" value="#{stepExecutionContext[name]}" />
+	</bean>
+
+	<bean id="pagingItemReader"
+		class="org.springframework.batch.item.database.JdbcPagingItemReader"
+		scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="queryProvider">
+			<bean
+				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+				<property name="dataSource" ref="dataSource" />
+				<property name="selectClause" value="select id, user_login, user_pass, age" />
+				<property name="fromClause" value="from users" />
+				<property name="whereClause" value="where id &gt;= :fromId and id &lt;= :toId" />
+				<property name="sortKey" value="id" />
+			</bean>
+		</property>
+		<!-- Inject via the ExecutionContext in rangePartitioner -->
+		<property name="parameterValues">
+			<map>
+				<entry key="fromId" value="#{stepExecutionContext[fromId]}" />
+				<entry key="toId" value="#{stepExecutionContext[toId]}" />
+			</map>
+		</property>
+		<property name="pageSize" value="10" />
+		<property name="rowMapper">
+			<bean class="com.mkyong.UserRowMapper" />
+		</property>
+	</bean>
+
+	<!-- csv file writer -->
+	<bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter"
+		scope="step" >
+		<property name="resource"
+			value="file:csv/outputs/users.processed#{stepExecutionContext[fromId]}-#{stepExecutionContext[toId]}.csv" />
+		<property name="appendAllowed" value="false" />
+		<property name="lineAggregator">
+			<bean
+				class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+					<bean
+						class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+						<property name="names" value="id, username, password, age" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="mongoItemReader" class="org.springframework.batch.item.data.MongoItemReader"
+		scope="step">
+		<property name="template" ref="mongoTemplate" />
+		<property name="targetType" value="com.mkyong.User" />
+		<property name="query"
+			value="{ 
+		'id':{$gt:#{stepExecutionContext[fromId]}, $lte:#{stepExecutionContext[toId]} 
+		} }" />
+		<property name="sort">
+			<util:map id="sort">
+				<entry key="id" value="" />
+			</util:map>
+		</property>
+	</bean>
+
+</beans>
