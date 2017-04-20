@@ -1,0 +1,60 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+	<batch:job id="reportJob">
+		<batch:step id="step1">
+			<batch:tasklet>
+				<batch:chunk reader="xmlItemReader" writer="mongodbItemWriter"
+					commit-interval="1">
+				</batch:chunk>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+	<bean id="mongodbItemWriter" class="org.springframework.batch.item.data.MongoItemWriter">
+		<property name="template" ref="mongoTemplate" />
+		<property name="collection" value="report2" />
+	</bean>
+	
+	<bean id="xmlItemReader" class="org.springframework.batch.item.xml.StaxEventItemReader">
+		<property name="fragmentRootElementName" value="record" />
+		<property name="resource" value="classpath:xml/report.xml" />
+		<property name="unmarshaller" ref="reportUnmarshaller" />
+	</bean>
+
+	<bean id="reportUnmarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+
+		<property name="aliases">
+			<util:map id="aliases">
+				<entry key="record" value="com.mkyong.model.Report" />
+				
+				<!-- 
+				<entry key="date" value="java.lang.String" />
+				<entry key="impression" value="java.lang.Long" />
+				<entry key="clicks" value="java.lang.Integer" />
+				<entry key="earning" value="java.math.BigDecimal" />
+				 -->
+				 
+			</util:map>
+		</property>
+
+		<property name="converters">
+			<array>
+				<ref bean="reportConverter" />
+			</array>
+		</property>
+
+	</bean>
+
+	<bean id="reportConverter" class="com.mkyong.converter.ReportConverter" />
+
+	<bean id="customWriter" class="com.mkyong.writers.CustomWriter" />
+
+</beans>
