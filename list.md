@@ -1,4 +1,4 @@
-[Spring Batch Tutorials/Advance](https://github.com/www-mkyoung-com/Mkyoung-Spring-Frameworks/Spring%20Batch%20Tutorials/Advance/readme.md)
+[Spring Batch Tutorials/Advance](https://github.com/www-mkyoung-com/Mkyoung-Spring-Frameworks/Spring%20Batch%20Tutorials/Advance/)
 
 ./Spring Batch Tutorials/Advance/Spring Batch listeners example/readme.md
 ./Spring Batch Tutorials/Advance/Spring Batch Partitioning example/readme.md
