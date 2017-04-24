@@ -1,8 +1,10 @@
 [Spring Batch Tutorials/Advance](https://github.com/www-mkyoung-com/Mkyoung-Spring-Frameworks/tree/master/Spring%20Batch%20Tutorials/Advance/)
 
-./Spring Batch Tutorials/Advance/Spring Batch listeners example/readme.md
-./Spring Batch Tutorials/Advance/Spring Batch Partitioning example/readme.md
-./Spring Batch Tutorials/ItemReader- ItemProcessor- ItemWriter/readme.md
+[./Spring Batch Tutorials/Advance/Spring Batch listeners example](https://github.com/www-mkyoung-com/Mkyoung-Spring-Frameworks/tree/master/Spring%20Batch%20Tutorials/Advance/Spring%20Batch%20listeners%20example)
+
+[./Spring Batch Tutorials/Advance/Spring Batch Partitioning example](https://github.com/www-mkyoung-com/Mkyoung-Spring-Frameworks/tree/master/Spring%20Batch%20Tutorials/Advance/Spring%20Batch%20Partitioning%20example)
+
+[./Spring Batch Tutorials/ItemReader- ItemProcessor- ItemWriter]
 ./Spring Batch Tutorials/ItemReader- ItemProcessor- ItemWriter/Spring Batch Example - MySQL Database To XML/readme.md
 ./Spring Batch Tutorials/ItemReader- ItemProcessor- ItemWriter/Spring Batch Example - CSV File To MySQL Database/readme.md
 ./Spring Batch Tutorials/ItemReader- ItemProcessor- ItemWriter/Spring Batch Example - XML File To CSV File/readme.md
